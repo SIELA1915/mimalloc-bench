@@ -6,8 +6,8 @@
 # Allocators and tests
 # --------------------------------------------------------------------
 
-readonly alloc_all="sys dh ff fg gd hd hm hml iso je lf lp lt mi mi-sec mi2 mi2-sec mng mesh nomesh pa rp sc scudo sg sm sn sn-sec tbb tc tcg mi-dbg mi2-dbg xmi xsmi xmi-dbg"
-readonly alloc_secure="dh ff gd hm hml iso mi-sec mi2-sec mng pa scudo sg sn-sec sg"
+readonly alloc_all="sys dh ff fg gd hd hm hml iso je lf lp lt mi mi-sec mi2 mi2-sec mng mesh nomesh pa rp sc scudo scudo_fixed sg sm sn sn-sec tbb tc tcg mi-dbg mi2-dbg xmi xsmi xmi-dbg"
+readonly alloc_secure="dh ff gd hm hml iso mi-sec mi2-sec mng pa scudo scudo_fixed sg sn-sec sg"
 alloc_run=""           # allocators to run (expanded by command line options)
 alloc_installed="sys"  # later expanded to include all installed allocators
 alloc_libs="sys="      # mapping from allocator to its .so as "<allocator>=<sofile> ..."
@@ -116,6 +116,7 @@ alloc_lib_add "pa"     "$localdevdir/pa/partition_alloc_builder/out/Default/libp
 alloc_lib_add "rp"     "$lib_rp"
 alloc_lib_add "sc"     "$localdevdir/sc/out/Release/lib.target/libscalloc$extso"
 alloc_lib_add "scudo"  "$localdevdir/scudo/compiler-rt/lib/scudo/standalone/libscudo$extso"
+alloc_lib_add "scudo_fixed"  "$localdevdir/scudo_fixed/compiler-rt/lib/scudo/standalone/libscudo_fixed$extso"
 alloc_lib_add "sg"     "$localdevdir/sg/libSlimGuard.so"
 alloc_lib_add "sm"     "$localdevdir/sm/release/lib/libsupermalloc$extso"
 alloc_lib_add "sn"     "$localdevdir/sn/release/libsnmallocshim$extso"
@@ -406,6 +407,7 @@ while : ; do
             echo "  rp                           use rpmalloc"
             echo "  sc                           use scalloc"
             echo "  scudo                        use scudo"
+            echo "  scudo_fixed                  use scudo_fixed"
             echo "  sg                           use slimguard"
             echo "  sm                           use supermalloc"
             echo "  sn                           use snmalloc"

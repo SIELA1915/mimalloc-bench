@@ -52,6 +52,7 @@ readonly version_pa=main
 readonly version_rp=39f5cfaa35f73b445d6ec66629ab3963eeb5fa7a  # fix some gcc warnings
 readonly version_sc=master   # unmaintained since 2016
 readonly version_scudo=main
+readonly version_scudo_fixed=secondary-mitigation
 readonly version_sg=master   # ~unmaintained since 2021
 readonly version_sm=master   # ~unmaintained since 2017
 readonly version_sn=0.6.2
@@ -86,6 +87,7 @@ setup_pa=0
 setup_rp=0
 setup_sc=0
 setup_scudo=0
+setup_scudo_fixed=0
 setup_sg=0
 setup_sm=0
 setup_sn=0
@@ -144,6 +146,7 @@ while : ; do
           setup_mesh=$flag_arg          
           setup_rp=$flag_arg
           setup_scudo=$flag_arg     # lacking <sys/auxv.h>
+          setup_scudo_fixed=$flag_arg     # lacking <sys/auxv.h>
           setup_sm=$flag_arg        # ../src/supermalloc.h:10:31: error: expected function body after function declarator + error: use of undeclared identifier 'MADV_HUGEPAGE'
         else
           if ! [ `uname -m` = "x86_64" ]; then
@@ -209,6 +212,8 @@ while : ; do
         setup_sc=$flag_arg;;
     scudo)
         setup_scudo=$flag_arg;;
+    scudo_fixed)
+        setup_scudo_fixed=$flag_arg;;
     sg)
         setup_sg=$flag_arg;;
     sm)
@@ -253,6 +258,7 @@ while : ; do
         echo "  rp                           setup rpmalloc ($version_rp)"
         echo "  sc                           setup scalloc ($version_sc)"
         echo "  scudo                        setup scudo ($version_scudo)"
+        echo "  scudo fixed                  setup scudo fixed ($version_scudo_fixed)"
         echo "  sg                           setup slimguard ($version_sg)"
         echo "  sm                           setup supermalloc ($version_sm)"
         echo "  sn                           setup snmalloc ($version_sn)"
@@ -473,7 +479,16 @@ if test "$setup_scudo" = "1"; then
   partial_checkout scudo $version_scudo https://github.com/llvm/llvm-project "compiler-rt/lib/scudo/standalone"
   cd "compiler-rt/lib/scudo/standalone"
   # TODO: make the next line prettier instead of hardcoding everything.
-  clang++ -flto -fuse-ld=lld -fPIC -std=c++14 -fno-exceptions $CXXFLAGS -fno-rtti -fvisibility=internal -msse4.2 -O3 -I include -shared -o libscudo$extso *.cpp -pthread
+  clang++ -flto -fPIC -std=c++14 -fno-exceptions $CXXFLAGS -fno-rtti -fvisibility=internal -msse4.2 -O3 -I include -shared -o libscudo$extso *.cpp -pthread
+  cd -
+  popd
+fi
+
+if test "$setup_scudo_fixed" = "1"; then
+  partial_checkout scudo_fixed $version_scudo_fixed https://github.com/siela1915/llvm-project "compiler-rt/lib/scudo/standalone"
+  cd "compiler-rt/lib/scudo/standalone"
+  # TODO: make the next line prettier instead of hardcoding everything.
+  clang++ -flto -fPIC -std=c++14 -fno-exceptions $CXXFLAGS -fno-rtti -fvisibility=internal -msse4.2 -O3 -I include -shared -o libscudo_fixed$extso *.cpp -pthread
   cd -
   popd
 fi
